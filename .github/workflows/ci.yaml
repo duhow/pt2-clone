@@ -8,13 +8,32 @@ on:
   pull_request:
 
 jobs:
-  build:
+  windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    env:
+      CONFIGURATION: Release
+      SOLUTION_FILE: vs2019_project/pt2-clone.sln
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Visual Studio 2019
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # tag v2.0.0
+        with:
+          vs-version: 16.0
+
+      - name: Build solution in Release mode
+        run: |
+          msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=${{ env.CONFIGURATION }} /m
+
+  linux:
     name: Build on Ubuntu ${{ matrix.os }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: ["20.04", "22.04", "24.04"]
+        os: ["24.04"]
     env:
       DEBIAN_FRONTEND: noninteractive
     container:
