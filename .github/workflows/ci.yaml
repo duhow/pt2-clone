@@ -1,0 +1,32 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - master
+      - github-actions
+  pull_request:
+
+jobs:
+  build:
+    name: Build on Ubuntu ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["20.04", "22.04", "24.04"]
+    container:
+      image: ubuntu:${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update and install dependencies
+        run: |
+          apt update
+          apt install --no-install-recommends -y \
+            build-essential libsdl2-dev libsdl2-dev
+
+      - name: Build project
+        run: make -j$(nproc)
