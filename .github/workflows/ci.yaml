@@ -27,6 +27,12 @@ jobs:
         run: |
           msbuild ${{ env.SOLUTION_FILE }} /p:Configuration=${{ env.CONFIGURATION }} /m
 
+      - name: Upload built Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: release/win64
+
   linux:
     name: Build on Ubuntu ${{ matrix.os }}
     runs-on: ubuntu-latest
@@ -51,3 +57,9 @@ jobs:
 
       - name: Build project
         run: make -j$(nproc)
+
+      - name: Upload built Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-release
+          path: release/other
